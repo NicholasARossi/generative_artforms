@@ -4,6 +4,9 @@ resources, scripts and playground files for creating computational art
 
 #Notes
 
+Moiree patterns in python :
+https://scipython.com/blog/moire-patterns-in-a-pair-of-hexagonal-lattices/
+
 shufa resource 书法字典_书法_在线书法篆刻学习资料
 http://www.shufazidian.com/
 
