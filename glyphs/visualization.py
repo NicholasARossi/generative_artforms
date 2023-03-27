@@ -10,10 +10,11 @@ import math
 
 
 
-def render_path(this_path):
+def render_path_debug(path,all_points,
+                save_location):
 
     fig, ax = plt.subplots(figsize=(5, 5))
-    size = np.shape(this_path)[0]
+    size = np.shape(path)[0]
     x_vals_initial = np.arange(size)
     # generate coordinates
     x_vals = []
@@ -29,8 +30,8 @@ def render_path(this_path):
     # trace path
     x_trace =[]
     y_trace =[]
-    for i in range(int(np.max(this_path))):
-        loc = np.argwhere(this_path==i+1)[0]
+    for i in range(int(np.max(path))):
+        loc = np.argwhere(path==i+1)[0]
         x_trace.append(loc[0]+.5*loc[1])
         y_trace.append(loc[1] * np.sin(np.deg2rad(60)))
 
@@ -41,5 +42,16 @@ def render_path(this_path):
 
     ax.set_xlim([-1, size+1])
     ax.set_ylim([-1, size+1])
+    fine_x = []
+    fine_y =[]
+    counter = 0
+    for x,y in all_points:
+        fine_x.append(x)
+        fine_y.append(y)
+        ax.annotate(counter, (x, y))
+        counter +=1
+    ax.plot(fine_x,fine_y,color='#d3d3d3')
+    ax.scatter(fine_x,fine_y,color='#d3d3d3')
 
-    fig.savefig('glyph_figures/my_glypy.png',dpi=300,bbox_inches='tight')
+
+    fig.savefig(save_location,dpi=300,bbox_inches='tight')
