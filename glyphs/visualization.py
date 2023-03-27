@@ -1,13 +1,5 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import math
-
-
-
-
-
-
-
 
 
 def render_path_debug(path,all_points,
