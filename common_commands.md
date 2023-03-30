@@ -28,3 +28,10 @@ vpype \
     end
 ```
 
+# pixel art
+
+```shell
+export IMAGE_DIR=/Volumes/G-RAID/projects/2023_03/pixelart
+
+vpype pixelart --mode snake --pen-width .35mm $IMAGE_DIR/drinks.png linesort write  $IMAGE_DIR/output.svg
+```

@@ -1,8 +1,15 @@
-# generative_artforms
-resources, scripts and playground files for creating computational art
+
+# Wishlist
+1. Script to turn hershey font into svg demo programmatically
+2. scramble hershey font
+3. generative glyph hershey font
 
 
-#Notes
+
+# resources
+
+printable art forms:
+https://turtletoy.net/
 
 Moiree patterns in python :
 https://scipython.com/blog/moire-patterns-in-a-pair-of-hexagonal-lattices/
@@ -30,5 +37,12 @@ https://github.com/tja/schotter
 Artists :
 Lebbeus Woods
 
-Code tricks:
+# generative glyphs
+https://medium.com/tangibit-studios/the-abundance-problem-of-generative-art-78398568b5d8
+
+# Infra
+VPYPE for image cleanup
+https://github.com/abey79/vpype
+
+deep dive into plotting
 https://nb.paulbutler.org/optimizing-plots-with-tsp-solver/
