@@ -1,7 +1,7 @@
 import numpy as np
 
 # Image dimensions and grid lattice size, a.
-width, height = 600, 400
+width, height = 1200, 800
 a = 5
 
 # a.sin(60) and a.cos(60)
@@ -87,6 +87,29 @@ def generate_lattice(lattice='lattice1'):
     with open(f'examples/{lattice}.svg', 'w') as fo:
         print('\n'.join(s), file=fo)
 
+
+def generate_lattice_unified():
+    s = []
+    svg_preamble(s)
+
+    # Angle of rotation of the lattices (degrees)
+    th = 10
+    # An internal variable to offset every other row of the unit cells when drawing
+    _ph = 0
+    for iy in range(ny):
+        _ph = 0 if _ph else gx
+        for ix in range(nx):
+
+            add_unit_cell(s, ix*2*gx + _ph, iy*(a+gy), cls='lattice1')
+
+            add_unit_cell(s, ix*2*gx + _ph, iy*(a+gy), np.radians(th), 'lattice2')
+
+    s.append('</svg>')
+
+    with open(f'examples/lattice_unified.svg', 'w') as fo:
+        print('\n'.join(s), file=fo)
+
 if __name__ == '__main__':
-    generate_lattice(lattice='lattice1')
-    generate_lattice(lattice='lattice2')
+    # generate_lattice(lattice='lattice1')
+    # generate_lattice(lattice='lattice2')
+    generate_lattice_unified()
