@@ -1,17 +1,23 @@
 import math
 import numpy as np
-
+from enum import Enum
 from glyphs.utilities import hexagon_vertices,\
     compare_points, generate_slope, close_compare
 
 
-
+ROTATION_MAP = {0:'ccw',
+                1:'cw'}
 
 
 class GlyphPath:
-    def __init__(self, grid_path):
+    def __init__(self, grid_path, grid_rotations):
         self.grid_path = grid_path
+        self.grid_rotations = grid_rotations
+
         self.path_locations = self.convert_to_locations()
+        self.path_rotations = self.convert_to_path_rotations()
+
+
 
     def convert_to_locations(self):
         x_trace = []
@@ -25,10 +31,18 @@ class GlyphPath:
         y_trace.append(y_trace[0])
         return [(x, y) for x, y in zip(x_trace, y_trace)]
 
+    def convert_to_path_rotations(self):
+        rotations = []
+        for i in range(int(np.max(self.grid_path))):
+            loc = np.argwhere(self.grid_path == i + 1)[0]
+            rotation = ROTATION_MAP[self.grid_rotations[tuple([int(x) for x in loc])]]
+            rotations.append(rotation)
+        return rotations
+
     def add_kernals(self):
         self.kernals = []
-        for path_location in self.path_locations:
-            self.kernals.append(GlyphKernal(path_location))
+        for path_rotation,path_location in zip(self.path_rotations,self.path_locations):
+            self.kernals.append(GlyphKernal(path_location, rotation=path_rotation))
 
     def follow_path(self):
         all_path_points = []
@@ -45,17 +59,18 @@ class GlyphPath:
                                           self.kernals[i + 1].center_point)
 
 
-
             self.kernals[i].recurse_shape_points(current_point,
                                                  target_slope)
+
             all_path_points.extend(self.kernals[i].subpath)
 
+
+
+            same_rotation = self.kernals[i].rotation == self.kernals[i + 1].rotation
             # leap to next kernal
-            if self.kernals[i].rotation == self.kernals[i + 1].rotation:
-                # we find the point on the next kernal that has the target slope
-                current_point = self.kernals[i + 1].find_point_on_slope(all_path_points[-1], target_slope)
-            else:
-                pass
+
+            current_point = self.kernals[i + 1].find_point_on_slope(all_path_points[-1], target_slope,same_rotation)
+
 
         return all_path_points
 
@@ -89,6 +104,9 @@ class GlyphKernal:
         self.shape_points_with_rotation = {}
         if self.rotation == 'cw':
             shape_points_extended = shape_points_extended[::-1]
+        else:
+            shape_points_extended = shape_points_extended
+
 
         for i, point in enumerate(shape_points_extended[:-1]):
             self.shape_points_with_rotation[point] = shape_points_extended[i + 1]
@@ -132,10 +150,6 @@ class GlyphKernal:
         if close_compare(current_anchor_slope, target_slope):
             self.subpath.append(next_anchor_point)
             return self.subpath
-        # elif close_compare(current_shape_slope, target_slope):
-        #     self.subpath.append(next_shape_point)
-        #
-        #     return self.subpath
 
 
         else:
@@ -144,14 +158,20 @@ class GlyphKernal:
 
     def find_point_on_slope(self,
                             current_point,
-                            slope):
+                            slope,
+                            same_rotation):
         matches = {}
         for point in self.shape_points:
             if close_compare(generate_slope(current_point, point), slope):
                 matches[math.dist(current_point, point)] = point
 
         try:
-            return matches[min(matches.keys())]
+            if same_rotation:
+                return matches[min(matches.keys())]
+            else:
+                point = matches[min(matches.keys())]
+
+                return self.shape_points_with_rotation[point]
         except:
             print('bug')
 
@@ -179,14 +199,18 @@ if __name__ == '__main__':
     path[1, 2] = 6
     path[0, 2] = 7
     path[0, 1] = 8
-
-    path[0, 0] = 1
-    path[0, 1] = 2
+    #
+    # path[0, 0] = 1
+    # path[0, 1] = 2
     # path[1, 1] = 3
     # path[1, 2] = 4
 
+    rotations = np.zeros((size, size))
+    rotations[1, 1] = 1
+    rotations[1, 2] = 1
 
-    glyph_path = GlyphPath(path)
+
+    glyph_path = GlyphPath(path,rotations)
     glyph_path.add_kernals()
     all_points = glyph_path.follow_path()
     save_location = 'glyph_figures/fine_path.png'
