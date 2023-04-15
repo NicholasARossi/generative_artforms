@@ -17,6 +17,7 @@ def render_path_debug(path,all_points,
         x_vals.extend(x_vals_initial)
         x_vals_initial = [x + .5 for x in x_vals_initial]
         y_vals.extend([i * np.sin(np.deg2rad(60))] * size)
+
     ax.scatter(x_vals, y_vals)
 
     # trace path
@@ -42,6 +43,10 @@ def render_path_debug(path,all_points,
         fine_y.append(y)
         ax.annotate(counter, (x, y))
         counter +=1
+    # complete the loop
+    fine_x.append(fine_x[0])
+    fine_y.append(fine_y[0])
+
     ax.plot(fine_x,fine_y,color='#d3d3d3')
     ax.scatter(fine_x,fine_y,color='#d3d3d3')
 

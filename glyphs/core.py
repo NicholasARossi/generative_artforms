@@ -171,14 +171,14 @@ if __name__ == '__main__':
     """
     size = 3
     path = np.zeros((size, size))
-    # path[0, 0] = 1
-    # path[1, 0] = 2
-    # path[1, 1] = 3
-    # path[2, 1] = 4
-    # path[2, 2] = 5
-    # path[1, 2] = 6
-    # path[0, 2] = 7
-    # path[0, 1] = 8
+    path[0, 0] = 1
+    path[1, 0] = 2
+    path[1, 1] = 3
+    path[2, 1] = 4
+    path[2, 2] = 5
+    path[1, 2] = 6
+    path[0, 2] = 7
+    path[0, 1] = 8
 
     path[0, 0] = 1
     path[0, 1] = 2
