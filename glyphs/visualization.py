@@ -52,3 +52,31 @@ def render_path_debug(path,all_points,
 
 
     fig.savefig(save_location,dpi=300,bbox_inches='tight')
+
+
+
+def render_path_fill(path,
+                     all_points,
+                save_location):
+
+    fig, ax = plt.subplots(figsize=(5, 5))
+    size = np.shape(path)[0]
+
+
+    ax.set_xlim([-1, size+1])
+    ax.set_ylim([-1, size+1])
+    fine_x = []
+    fine_y =[]
+    for x,y in all_points:
+        fine_x.append(x)
+        fine_y.append(y)
+
+    # complete the loop
+    fine_x.append(fine_x[0])
+    fine_y.append(fine_y[0])
+
+
+    ax.fill(fine_x,fine_y,color='#d3d3d3')
+    plt.axis('off')
+
+    fig.savefig(save_location,dpi=300,bbox_inches='tight')

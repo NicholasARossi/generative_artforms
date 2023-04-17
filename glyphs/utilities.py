@@ -19,6 +19,8 @@ def compare_points(this_point, comparison_points):
     raw_dict = {point: math.dist(point, this_point) for point in comparison_points}
     return OrderedDict(sorted(raw_dict.items(), key=itemgetter(1)))
 
+def poly_area(x,y):
+    return 0.5*np.abs(np.dot(x,np.roll(y,1))-np.dot(y,np.roll(x,1)))
 
 def generate_slope(current_point, next_point):
     """
@@ -30,8 +32,12 @@ def generate_slope(current_point, next_point):
     -.5 uper left
 
     """
-
-    slope =(next_point[1] - current_point[1]) / (next_point[0] - current_point[0])
+    if next_point[0] - current_point[0] == 0:
+        slope = 0
+    elif next_point[1] - current_point[1] == 0:
+        slope = np.inf
+    else:
+        slope =(next_point[1] - current_point[1]) / (next_point[0] - current_point[0])
 
     is_right = np.sign(np.round(next_point[0],3)-np.round(current_point[0],3))
     is_up = np.sign(np.round(next_point[1],3)-np.round(current_point[1],3))

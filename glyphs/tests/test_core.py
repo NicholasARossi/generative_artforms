@@ -1,7 +1,7 @@
 import unittest
 from glyphs.core import GlyphPath, GlyphKernal
 import numpy as np
-
+from glyphs.utilities import poly_area
 
 class TestPath(unittest.TestCase):
     def setUp(self) -> None:
@@ -16,19 +16,20 @@ class TestPath(unittest.TestCase):
         path[0, 2] = 7
         path[0, 1] = 8
         self.path = path
+        self.rotations = np.zeros((size, size))
 
     def test_glyph_path(self):
-        glyph_path = GlyphPath(self.path)
+        glyph_path = GlyphPath(self.path,self.rotations)
 
         self.assertEqual(len(glyph_path.path_locations), np.max(self.path) + 1)
 
     def test_add_kernals(self):
-        glyph_path = GlyphPath(self.path)
+        glyph_path = GlyphPath(self.path,self.rotations)
         glyph_path.add_kernals()
-        self.assertEqual(len(glyph_path.kernals), np.max(self.path) + 1)
+        self.assertEqual(len(glyph_path.kernals), np.max(self.path) )
 
     def test_follow_path(self):
-        glyph_path = GlyphPath(self.path)
+        glyph_path = GlyphPath(self.path,self.rotations)
         glyph_path.add_kernals()
         glyph_path.follow_path()
 
@@ -45,7 +46,7 @@ class TestKernal(unittest.TestCase):
 
 
 class IntegrationTest(unittest.TestCase):
-    def test_large_circle(self):
+    def setUp(self) -> None:
         size = 3
         path = np.zeros((size, size))
         path[0, 0] = 1
@@ -56,20 +57,43 @@ class IntegrationTest(unittest.TestCase):
         path[1, 2] = 6
         path[0, 2] = 7
         path[0, 1] = 8
-        glyph_path = GlyphPath(path)
+        self.large_path = path
+
+        rotations = np.zeros((size, size))
+        rotations[1, 1] = 1
+        rotations[1, 2] = 1
+        self.large_rotation = rotations
+        self.zero_rotations = np.zeros((size, size))
+
+    def test_large_circle(self):
+
+        glyph_path = GlyphPath(self.large_path,self.zero_rotations)
         glyph_path.add_kernals()
         all_points = glyph_path.follow_path()
-        self.assertEqual(len(all_points),29)
+        self.assertEqual(len(all_points),26)
 
     def test_small_circle(self):
         size = 3
         path = np.zeros((size, size))
         path[0, 0] = 1
         path[0, 1] = 2
-        glyph_path = GlyphPath(path)
+        glyph_path = GlyphPath(path,np.zeros((size, size)))
         glyph_path.add_kernals()
         all_points = glyph_path.follow_path()
-        self.assertEqual(len(all_points) , 10)
+        self.assertEqual(len(all_points) , 4)
+
+    def test_area(self):
+        glyph_path = GlyphPath(self.large_path, self.large_rotation)
+        glyph_path.add_kernals()
+        all_points = glyph_path.follow_path()
+        xs =[]
+        ys = []
+        for x,y in all_points:
+            xs.append(x)
+            ys.append(y)
+        self.assertAlmostEqual(poly_area(xs,ys),4.041451884327376)
+
+
 
 if __name__ == '__main__':
     unittest.main()
