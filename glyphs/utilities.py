@@ -32,12 +32,8 @@ def generate_slope(current_point, next_point):
     -.5 uper left
 
     """
-    if next_point[0] - current_point[0] == 0:
-        slope = 0
-    elif next_point[1] - current_point[1] == 0:
-        slope = np.inf
-    else:
-        slope =(next_point[1] - current_point[1]) / (next_point[0] - current_point[0])
+
+    slope =(next_point[1] - current_point[1]) / (next_point[0] - current_point[0])
 
     is_right = np.sign(np.round(next_point[0],3)-np.round(current_point[0],3))
     is_up = np.sign(np.round(next_point[1],3)-np.round(current_point[1],3))
