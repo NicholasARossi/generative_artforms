@@ -19,7 +19,7 @@ def determine_optional_moves(path):
     optional_moves = []
     visted_locs = set(tuple(x) for x in np.argwhere(path != 0))
 
-    for (dx, dy) in [[0, 1], [1, 0], [-1, 0], [0, -1], [1, 1], [-1, -1], [-1, 1], [1, -1]]:
+    for (dx, dy) in [[0, 1], [1, 0], [-1, 0], [0, -1]]:
         px, py = current_location[0] + dx, current_location[1] + dy
         # check to make sure we're on the board
         if px >= 0 and px < size and py >= 0 and py < size:
@@ -216,23 +216,27 @@ if __name__ == '__main__':
     
     """
     size = 3
-    path = np.zeros((size, size))
-    path[0, 0] = 1
-    path[1, 0] = 2
-    path[1, 1] = 3
-    path[2, 1] = 4
-    path[2, 2] = 5
-    path[1, 2] = 6
-    path[0, 2] = 7
-    path[0, 1] = 8
-
-
+    # path = np.zeros((size, size))
+    # path[0, 0] = 1
+    # path[1, 0] = 2
+    # path[1, 1] = 3
+    # path[2, 1] = 4
+    # path[2, 2] = 5
+    # path[1, 2] = 6
+    # path[0, 2] = 7
+    # path[0, 1] = 8
+    #
+    #
     rotations = np.zeros((size, size))
     rotations[1, 1] = 1
     rotations[1, 2] = 1
+    path = np.array([[1., 2., 3.],
+                     [8., 7., 4.],
+                     [0., 6.,5.]])
+
 
     glyph_path = GlyphPath(path, rotations)
     glyph_path.add_kernals()
     all_points = glyph_path.follow_path()
-    save_location = 'glyph_figures/fill_path.png'
-    render_path_fill(path, all_points, save_location)
+    save_location = 'glyph_figures/debug_fill_path.png'
+    render_path_debug(path, all_points, save_location)

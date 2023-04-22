@@ -37,7 +37,7 @@ def generate_slope(current_point, next_point):
 
     is_right = np.sign(np.round(next_point[0],3)-np.round(current_point[0],3))
     is_up = np.sign(np.round(next_point[1],3)-np.round(current_point[1],3))
-    return [slope, is_right+is_up]
+    return [slope, is_right,is_up]
 
 
 def close_compare(val1, val2):
