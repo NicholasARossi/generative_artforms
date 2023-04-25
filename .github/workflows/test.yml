@@ -2,16 +2,22 @@
 name: Test
 on: [push]
 jobs:
-  build:
+ build:
+    name: Build, Test, Push
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python all python version
-        uses: actions/setup-python@v2
+
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
-          python-version: 3.9
-          architecture: x64
+          ref: ${{ env.GIT_REF_SHA }}
+          fetch-depth: 0
+
      - name: Install dependencies
        run: pip install -r requirements.txt
+
      - name: Run Test
        run: python -m unittest discover glyphs/tests
+
+
