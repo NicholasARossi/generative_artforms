@@ -33,7 +33,7 @@ def main(size):
     for i,path in enumerate(select_paths):
         #TODO randomize rotations
         try:
-            rotations = np.zeros((size, size))
+            rotations = np.random.choice(2,size**2).reshape((size,size))
             glyph_path = GlyphPath(path, rotations)
             glyph_path.add_kernals()
             all_points = glyph_path.follow_path()
@@ -41,6 +41,7 @@ def main(size):
         except:
             print('failure')
             print(path)
+            print(rotations)
 if __name__ == '__main__':
 
     # generate grid

@@ -88,8 +88,10 @@ class GlyphPath:
 
 
 
+
             self.kernals[i].recurse_shape_points(current_point,
                                                  target_slope)
+
 
             all_path_points.extend(self.kernals[i].subpath)
 
@@ -97,8 +99,11 @@ class GlyphPath:
             # leap to next kernal
 
             current_point = self.kernals[i + 1].find_point_on_slope(all_path_points[-1], target_slope, same_rotation)
-
+        self.all_path_points = all_path_points
         return all_path_points
+
+    def determine_if_self_crosses(self):
+        pass
 
 
 class GlyphKernal:
