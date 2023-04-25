@@ -15,4 +15,4 @@ jobs:
      - name: Install dependencies
        run: pip install -r requirements.txt
      - name: Run Test
-       run: python -m unittest discover tests
+       run: python -m unittest discover glyphs/tests
