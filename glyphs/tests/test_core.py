@@ -42,7 +42,7 @@ class TestKernal(unittest.TestCase):
         kernal = GlyphKernal(self.centerpoint)
         self.assertGreater(kernal.anchor_radius, kernal.radius)
 
-        self.assertEqual(len(kernal.anchor_points), 7)
+        self.assertEqual(len(kernal.anchor_points), 6)
 
 
 class IntegrationTest(unittest.TestCase):
@@ -70,7 +70,7 @@ class IntegrationTest(unittest.TestCase):
         glyph_path = GlyphPath(self.large_path,self.zero_rotations)
         glyph_path.add_kernals()
         all_points = glyph_path.follow_path()
-        self.assertEqual(len(all_points),26)
+        self.assertEqual(len(all_points),29)
 
     def test_small_circle(self):
         size = 3
@@ -80,7 +80,7 @@ class IntegrationTest(unittest.TestCase):
         glyph_path = GlyphPath(path,np.zeros((size, size)))
         glyph_path.add_kernals()
         all_points = glyph_path.follow_path()
-        self.assertEqual(len(all_points) , 4)
+        self.assertEqual(len(all_points) , 10)
 
     def test_area(self):
         glyph_path = GlyphPath(self.large_path, self.large_rotation)

@@ -55,3 +55,5 @@ def is_parallel_vectors(v1, v2):
         return True
     else:
         return False
+def rotate(l, n):
+    return l[n:] + l[:n]
