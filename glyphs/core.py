@@ -233,25 +233,25 @@ if __name__ == '__main__':
     """
     size = 3
     path = np.zeros((size, size))
-    path[0, 0] = 1
-    path[1, 0] = 2
-    path[1, 1] = 3
-    path[2, 1] = 4
-    path[2, 2] = 5
-    path[1, 2] = 6
-    path[0, 2] = 7
-    path[0, 1] = 8
+    # path[0, 0] = 1
+    # path[1, 0] = 2
+    # path[1, 1] = 3
+    # path[2, 1] = 4
+    # path[2, 2] = 5
+    # path[1, 2] = 6
+    # path[0, 2] = 7
+    # path[0, 1] = 8
     rotations = np.zeros((size, size))
     rotations[1, 1] = 1
     rotations[1, 2] = 1
     #
     #
-    # rotations = np.ones((size, size))
-    # rotations[1, 1] = 0
-    # rotations[1, 2] = 0
-    # path = np.array([[1., 2., 3.],
-    #                  [8., 7., 4.],
-    #                  [0., 6.,5.]])
+    rotations = np.ones((size, size))
+    rotations[1, 1] = 0
+    rotations[1, 2] = 0
+    path = np.array([[1., 2., 3.],
+                     [8., 7., 4.],
+                     [0., 6.,5.]])
 
     glyph_path = GlyphPath(path, rotations)
     glyph_path.add_kernals()
