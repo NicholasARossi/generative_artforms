@@ -25,7 +25,7 @@ class TestPath(unittest.TestCase):
 
     def test_add_kernals(self):
         glyph_path = GlyphPath(self.path,self.rotations)
-        glyph_path._follow_path()
+        glyph_path._add_kernals()
         self.assertEqual(len(glyph_path.kernals), np.max(self.path) )
 
     def test_follow_path(self):

@@ -271,7 +271,7 @@ if __name__ == '__main__':
     rotations = np.zeros((size, size))
     rotations[1, 1] = 1
     rotations[1, 2] = 1
-    #
+    #f
     #
     rotations = np.ones((size, size))
     rotations[1, 1] = 0
