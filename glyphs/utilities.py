@@ -57,3 +57,17 @@ def is_parallel_vectors(v1, v2):
         return False
 def rotate(l, n):
     return l[n:] + l[:n]
+
+
+def total_distance(coords):
+    total_dist = 0.0
+    prev_x, prev_y = None, None
+
+    for x, y in coords:
+        if prev_x is not None and prev_y is not None:
+            dist = math.sqrt((x - prev_x)**2 + (y - prev_y)**2)
+            total_dist += dist
+
+        prev_x, prev_y = x, y
+
+    return total_dist

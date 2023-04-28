@@ -25,13 +25,12 @@ class TestPath(unittest.TestCase):
 
     def test_add_kernals(self):
         glyph_path = GlyphPath(self.path,self.rotations)
-        glyph_path.add_kernals()
+        glyph_path._follow_path()
         self.assertEqual(len(glyph_path.kernals), np.max(self.path) )
 
     def test_follow_path(self):
         glyph_path = GlyphPath(self.path,self.rotations)
-        glyph_path.add_kernals()
-        glyph_path.follow_path()
+        glyph_path.run_all()
 
 class TestKernal(unittest.TestCase):
     def setUp(self) -> None:
@@ -68,9 +67,8 @@ class IntegrationTest(unittest.TestCase):
     def test_large_circle(self):
 
         glyph_path = GlyphPath(self.large_path,self.zero_rotations)
-        glyph_path.add_kernals()
-        all_points = glyph_path.follow_path()
-        self.assertEqual(len(all_points),29)
+        glyph_path.run_all()
+        self.assertEqual(len(glyph_path.all_path_points),29)
 
     def test_small_circle(self):
         size = 3
@@ -78,17 +76,15 @@ class IntegrationTest(unittest.TestCase):
         path[0, 0] = 1
         path[0, 1] = 2
         glyph_path = GlyphPath(path,np.zeros((size, size)))
-        glyph_path.add_kernals()
-        all_points = glyph_path.follow_path()
-        self.assertEqual(len(all_points) , 10)
+        glyph_path.run_all()
+        self.assertEqual(len(glyph_path.all_path_points) , 10)
 
     def test_area(self):
         glyph_path = GlyphPath(self.large_path, self.large_rotation)
-        glyph_path.add_kernals()
-        all_points = glyph_path.follow_path()
+        glyph_path.run_all()
         xs =[]
         ys = []
-        for x,y in all_points:
+        for x,y in glyph_path.all_path_points:
             xs.append(x)
             ys.append(y)
         self.assertAlmostEqual(poly_area(xs,ys),4.041451884327376)

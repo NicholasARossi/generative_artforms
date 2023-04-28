@@ -2,7 +2,9 @@ import math
 import numpy as np
 from enum import Enum
 from glyphs.utilities import hexagon_vertices, \
-    compare_points, convert_to_slope_vector, close_compare, is_parallel_vectors, angle_between, rotate
+    compare_points, convert_to_slope_vector,\
+    close_compare, is_parallel_vectors, \
+    angle_between, rotate, poly_area, total_distance
 
 ROTATION_MAP = {0: 'ccw',
                 1: 'cw'}
@@ -39,10 +41,10 @@ class GlyphPath:
         self.grid_path = grid_path
         self.grid_rotations = grid_rotations
 
-        self.path_locations = self.convert_to_locations()
-        self.path_rotations = self.convert_to_path_rotations()
+        self.path_locations = self._convert_to_locations()
+        self.path_rotations = self._convert_to_path_rotations()
 
-    def convert_to_locations(self):
+    def _convert_to_locations(self):
         x_trace = []
         y_trace = []
         for i in range(int(np.max(self.grid_path))):
@@ -54,7 +56,7 @@ class GlyphPath:
         y_trace.append(y_trace[0])
         return [(x, y) for x, y in zip(x_trace, y_trace)]
 
-    def convert_to_path_rotations(self):
+    def _convert_to_path_rotations(self):
         rotations = []
         for i in range(int(np.max(self.grid_path))):
             loc = np.argwhere(self.grid_path == i + 1)[0]
@@ -62,12 +64,12 @@ class GlyphPath:
             rotations.append(rotation)
         return rotations
 
-    def add_kernals(self):
+    def _add_kernals(self):
         self.kernals = []
         for path_rotation, path_location in zip(self.path_rotations, self.path_locations):
             self.kernals.append(GlyphKernal(path_location, rotation=path_rotation))
 
-    def follow_path(self):
+    def _follow_path(self):
         all_path_points = []
         # determine first point
 
@@ -96,10 +98,35 @@ class GlyphPath:
                                                                         same_rotation)
 
         self.all_path_points = all_path_points
+        
         return all_path_points
 
-    def determine_if_self_crosses(self):
-        pass
+
+
+    def _determine_metrics(self):
+        # does it pass
+        not_crossing = len(set(self.all_path_points)) ==len(self.all_path_points)
+
+        x,y=tuple(zip(*self.all_path_points))
+        area = poly_area(x,y)
+
+        lenght_of_primary_cycle = len(self.path_locations)
+
+        self.metrics = {}
+        self.metrics['not_crossing'] = not_crossing
+        self.metrics['area'] = area
+        self.metrics['concavity'] = area / lenght_of_primary_cycle
+
+        #distance traveled
+        self.metrics['distance'] = total_distance(self.path_locations)
+        self.metrics['solidity'] = area / self.metrics['distance']
+
+    def run_all(self):
+        self._add_kernals()
+        self._follow_path()
+        self._determine_metrics()
+        
+
 
 
 class GlyphKernal:
@@ -254,7 +281,8 @@ if __name__ == '__main__':
                      [0., 6.,5.]])
 
     glyph_path = GlyphPath(path, rotations)
-    glyph_path.add_kernals()
-    all_points = glyph_path.follow_path()
+    glyph_path.run_all()
+
+    print(glyph_path.metrics)
     save_location = 'glyph_figures/debug_fill_path.png'
-    render_path_debug(path, all_points, save_location)
+    render_path_debug(path, glyph_path.all_path_points, save_location)
