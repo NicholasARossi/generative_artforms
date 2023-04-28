@@ -80,3 +80,28 @@ def render_path_fill(path,
     plt.axis('off')
 
     fig.savefig(save_location,dpi=300,bbox_inches='tight')
+
+def render_multipath_fill(paths, save_location):
+    size = np.shape(paths[0])[0]
+    fig, ax = plt.subplots(figsize=(5, 5))
+
+    ax.set_xlim([-1, np.sqrt(size)*np.sqrt(len(paths))+1])
+    ax.set_ylim([-1, np.sqrt(size)*np.sqrt(len(paths))+1])
+    num_cols = 5
+    row_number = 0
+    column_number = 0
+    for i, path in enumerate(paths):
+        column_number = i%num_cols
+        if column_number ==0:
+            row_number +=1
+
+        x,y = zip(*path)
+        x = [x_val+column_number*np.sqrt(size) for x_val in x]
+        y = [y_val+row_number*np.sqrt(size) for y_val in y]
+        x.append(x[0])
+        y.append(y[0])
+
+        ax.fill(x, y, color='#d3d3d3')
+
+    plt.axis('off')
+    fig.savefig(save_location)

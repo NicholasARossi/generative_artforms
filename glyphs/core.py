@@ -1,11 +1,11 @@
 import math
 import numpy as np
-from enum import Enum
+import pandas as pd
 from glyphs.utilities import hexagon_vertices, \
     compare_points, convert_to_slope_vector,\
     close_compare, is_parallel_vectors, \
     angle_between, rotate, poly_area, total_distance
-
+from tqdm import tqdm
 ROTATION_MAP = {0: 'ccw',
                 1: 'cw'}
 
@@ -35,6 +35,42 @@ def determine_optional_moves(path):
 
     return optional_moves
 
+class GridExplorer:
+    def __init__(self,size):
+        self.all_paths = []
+        self.spawning_locations = []
+        self.size = size
+        self._initialize_spawn_locations()
+
+
+    def _initialize_spawn_locations(self):
+
+        for x_loc in range(self.size):
+            for y_loc in range(self.size):
+                spawing_location = np.zeros((self.size, self.size))
+                spawing_location[x_loc,y_loc] = 1
+                self.spawning_locations.append(spawing_location)
+
+
+    def _move(self,path):
+        """
+        Recursively explore the grid to find all closed cycles
+        """
+        optional_moves = determine_optional_moves(path)
+        for optional_move in optional_moves:
+            if tuple(optional_move) == tuple(np.argwhere(path==1)[0]):
+                self.all_paths.append(path)
+            else:
+                # move to the location and recurse
+                new_path = path.copy()
+                new_path[optional_move[0],optional_move[1]] =np.max(new_path)+1
+                self._move(new_path)
+
+    def explore_closed_cylces(self):
+        for spawning_location in tqdm(self.spawning_locations):
+            self._move(spawning_location)
+
+
 
 class GlyphPath:
     def __init__(self, grid_path, grid_rotations):
@@ -43,7 +79,7 @@ class GlyphPath:
 
         self.path_locations = self._convert_to_locations()
         self.path_rotations = self._convert_to_path_rotations()
-
+        self.metrics = None
     def _convert_to_locations(self):
         x_trace = []
         y_trace = []
@@ -120,14 +156,19 @@ class GlyphPath:
         #distance traveled
         self.metrics['distance'] = total_distance(self.path_locations)
         self.metrics['solidity'] = area / self.metrics['distance']
+        self.metrics['all_points'] = self.all_path_points
+
 
     def run_all(self):
         self._add_kernals()
         self._follow_path()
         self._determine_metrics()
         
-
-
+    def return_series(self):
+        if self.metrics:
+            return pd.Series(self.metrics)
+        else:
+            return None
 
 class GlyphKernal:
     def __init__(self,
@@ -190,9 +231,6 @@ class GlyphKernal:
         for x, y in zip(self.shape_points_extended[:-1], anchor_points):
             self.anchor_points_with_rotation[x] = (y, y)
 
-        #
-        # for i, s in enumerate(self.shape_points[:-1]):
-        #     self.anchor_points_with_rotation[s] = (self.anchor_points[i-3],self.anchor_points[i-3])
 
     def recurse_shape_points(self,
                              point,
