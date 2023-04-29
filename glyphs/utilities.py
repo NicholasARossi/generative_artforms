@@ -71,3 +71,26 @@ def total_distance(coords):
         prev_x, prev_y = x, y
 
     return total_dist
+
+
+def find_repeated_locs(input_list):
+    repeated_nums = {}
+
+    for index, num in enumerate(input_list):
+        if num in repeated_nums:
+            repeated_nums[num].append(index)
+        else:
+            repeated_nums[num] = [index]
+
+    max_delta = 0
+    deltas = {}
+    for k,v in repeated_nums.items():
+        if len(v)>1:
+            delta = v[1]-v[0]
+            if delta>max_delta:
+                max_delta=delta
+                locs = v
+    if max_delta == 0:
+        locs = [0,len(input_list)-1]
+
+    return locs

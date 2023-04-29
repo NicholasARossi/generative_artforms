@@ -10,6 +10,7 @@ def main(size):
 
     explorer = GridExplorer(size)
     explorer.explore_closed_cylces()
+    explorer.save_cycles_to_csv()
 
     successful_cylces = []
     counter_value = 0
@@ -22,8 +23,10 @@ def main(size):
             successful_cylces.append(result_series)
 
         counter_value += 1
-    all_paths = list(pd.DataFrame(successful_cylces)['all_points'].values)
-    render_multipath_fill(all_paths,'glyph_figures/all_plots.png')
+    result_df = pd.DataFrame(successful_cylces)
+    result_df.to_csv('results_df.csv')
+    all_paths = list(result_df['all_points'].values)
+    render_multipath_fill(all_paths,'glyph_figures/all_plots.png',annotate=True)
 
 if __name__ == '__main__':
     main(3)

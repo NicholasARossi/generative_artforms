@@ -2,10 +2,16 @@ import math
 import numpy as np
 import pandas as pd
 from glyphs.utilities import hexagon_vertices, \
-    compare_points, convert_to_slope_vector,\
+    compare_points, convert_to_slope_vector, \
     close_compare, is_parallel_vectors, \
-    angle_between, rotate, poly_area, total_distance
+    angle_between, rotate, poly_area, total_distance, find_repeated_locs
 from tqdm import tqdm
+import logging
+
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s %(name)s %(levelname)s:%(message)s')
+logger = logging.getLogger(__name__)
+
 ROTATION_MAP = {0: 'ccw',
                 1: 'cw'}
 
@@ -35,41 +41,52 @@ def determine_optional_moves(path):
 
     return optional_moves
 
+
 class GridExplorer:
-    def __init__(self,size):
+    def __init__(self, size):
         self.all_paths = []
         self.spawning_locations = []
         self.size = size
         self._initialize_spawn_locations()
-
 
     def _initialize_spawn_locations(self):
 
         for x_loc in range(self.size):
             for y_loc in range(self.size):
                 spawing_location = np.zeros((self.size, self.size))
-                spawing_location[x_loc,y_loc] = 1
+                spawing_location[x_loc, y_loc] = 1
                 self.spawning_locations.append(spawing_location)
 
-
-    def _move(self,path):
+    def _move(self, path):
         """
         Recursively explore the grid to find all closed cycles
         """
         optional_moves = determine_optional_moves(path)
         for optional_move in optional_moves:
-            if tuple(optional_move) == tuple(np.argwhere(path==1)[0]):
+            if tuple(optional_move) == tuple(np.argwhere(path == 1)[0]):
                 self.all_paths.append(path)
             else:
                 # move to the location and recurse
                 new_path = path.copy()
-                new_path[optional_move[0],optional_move[1]] =np.max(new_path)+1
+                new_path[optional_move[0], optional_move[1]] = np.max(new_path) + 1
                 self._move(new_path)
 
     def explore_closed_cylces(self):
         for spawning_location in tqdm(self.spawning_locations):
             self._move(spawning_location)
 
+    def save_cycles_to_csv(self, save_location=None):
+        # dedup all paths
+        df = pd.DataFrame({'raw_paths': self.all_paths})
+        logger.info(f'total number of unique skeletons prior to dedup {len(df)}')
+
+        df['path_tuples'] = df['raw_paths'].apply(lambda x: tuple((x != 0).ravel()))
+        # dedup by path hash
+        df_dedup = df.drop_duplicates(subset=['path_tuples'])
+        logger.info(f'total number of unique skeletons post dedup {len(df_dedup)}')
+        self.all_paths = df_dedup['raw_paths'].values.tolist()
+        if save_location:
+            df_dedup.to_csv(save_location)
 
 
 class GlyphPath:
@@ -80,6 +97,7 @@ class GlyphPath:
         self.path_locations = self._convert_to_locations()
         self.path_rotations = self._convert_to_path_rotations()
         self.metrics = None
+
     def _convert_to_locations(self):
         x_trace = []
         y_trace = []
@@ -113,8 +131,8 @@ class GlyphPath:
                                    self.kernals[0].shape_points)
         current_point = distances.popitem(last=True)[0]
         self.kernals.append(self.kernals[0])
+        self.kernals.append(self.kernals[1])
         for i, kernal in enumerate(self.kernals[:-1]):
-
             all_path_points.append(current_point)
 
             target_slope = convert_to_slope_vector(self.kernals[i].center_point,
@@ -126,25 +144,36 @@ class GlyphPath:
 
             all_path_points.extend(self.kernals[i].subpath)
 
-            same_rotation = self.kernals[i].rotation == self.kernals[i + 1].rotation
             # leap to next kernal
 
-            if i != len(self.kernals) - 1:
-                current_point = self.kernals[i + 1].find_point_on_slope(all_path_points[-1], target_slope,
-                                                                        same_rotation)
+            same_rotation = self.kernals[i].rotation == self.kernals[i + 1].rotation
+            current_point = self.kernals[i + 1].find_point_on_slope(all_path_points[-1], target_slope,
+                                                                    same_rotation)
 
-        self.all_path_points = all_path_points
-        
-        return all_path_points
+        all_path_points.append(current_point)
 
+        rounded = np.round(all_path_points, 3)
+        rounded_refactor = [tuple(row) for row in rounded.tolist()]
+        # trim off little bits
 
+        boundaries = find_repeated_locs(rounded_refactor)
+
+        bounded = rounded_refactor[boundaries[0]:boundaries[1]]
+        deduped = []
+        for val in bounded:
+            if val not in deduped:
+                deduped.append(val)
+        self.all_path_points = deduped
+
+        return self.all_path_points
 
     def _determine_metrics(self):
         # does it pass
-        not_crossing = len(set(self.all_path_points)) ==len(self.all_path_points)
 
-        x,y=tuple(zip(*self.all_path_points))
-        area = poly_area(x,y)
+        not_crossing = len(set(self.all_path_points)) == len(self.all_path_points)
+
+        x, y = tuple(zip(*self.all_path_points))
+        area = poly_area(x, y)
 
         lenght_of_primary_cycle = len(self.path_locations)
 
@@ -153,22 +182,24 @@ class GlyphPath:
         self.metrics['area'] = area
         self.metrics['concavity'] = area / lenght_of_primary_cycle
 
-        #distance traveled
+        # distance traveled
         self.metrics['distance'] = total_distance(self.path_locations)
         self.metrics['solidity'] = area / self.metrics['distance']
         self.metrics['all_points'] = self.all_path_points
-
+        self.metrics['grid'] = self.grid_path
+        self.metrics['rotations'] = self.grid_rotations
 
     def run_all(self):
         self._add_kernals()
         self._follow_path()
         self._determine_metrics()
-        
+
     def return_series(self):
         if self.metrics:
             return pd.Series(self.metrics)
         else:
             return None
+
 
 class GlyphKernal:
     def __init__(self,
@@ -230,7 +261,6 @@ class GlyphKernal:
 
         for x, y in zip(self.shape_points_extended[:-1], anchor_points):
             self.anchor_points_with_rotation[x] = (y, y)
-
 
     def recurse_shape_points(self,
                              point,
@@ -306,17 +336,25 @@ if __name__ == '__main__':
     # path[1, 2] = 6
     # path[0, 2] = 7
     # path[0, 1] = 8
-    rotations = np.zeros((size, size))
-    rotations[1, 1] = 1
-    rotations[1, 2] = 1
-    #f
-    #
-    rotations = np.ones((size, size))
-    rotations[1, 1] = 0
-    rotations[1, 2] = 0
-    path = np.array([[1., 2., 3.],
-                     [8., 7., 4.],
-                     [0., 6.,5.]])
+    # rotations = np.zeros((size, size))
+    # rotations[1, 1] = 1
+    # rotations[1, 2] = 1
+    # #f
+    # #
+    # rotations = np.zeros((size, size))
+    # rotations[1, 1] = 1
+    # rotations[1, 2] = 1
+    # path = np.array([[1., 2., 0],
+    #                  [4., 3., 0],
+    #                  [0., 0,0]])
+
+    path = np.array([[1., 6., 5.],
+                     [2., 3., 4.],
+                     [0., 0., 0.]])
+
+    rotations = np.array([[1, 0, 1],
+                          [0, 1, 0],
+                          [1, 1, 1]])
 
     glyph_path = GlyphPath(path, rotations)
     glyph_path.run_all()
