@@ -68,7 +68,7 @@ class IntegrationTest(unittest.TestCase):
 
         glyph_path = GlyphPath(self.large_path,self.zero_rotations)
         glyph_path.run_all()
-        self.assertEqual(len(glyph_path.all_path_points),29)
+        self.assertEqual(len(glyph_path.all_path_points),31)
 
     def test_small_circle(self):
         size = 3
@@ -77,7 +77,7 @@ class IntegrationTest(unittest.TestCase):
         path[0, 1] = 2
         glyph_path = GlyphPath(path,np.zeros((size, size)))
         glyph_path.run_all()
-        self.assertEqual(len(glyph_path.all_path_points) , 10)
+        self.assertEqual(len(glyph_path.all_path_points) , 13)
 
     def test_area(self):
         glyph_path = GlyphPath(self.large_path, self.large_rotation)
@@ -87,7 +87,7 @@ class IntegrationTest(unittest.TestCase):
         for x,y in glyph_path.all_path_points:
             xs.append(x)
             ys.append(y)
-        self.assertAlmostEqual(poly_area(xs,ys),4.041451884327376)
+        self.assertAlmostEqual(poly_area(xs,ys),4.0414855649999915)
 
 
 

@@ -4,7 +4,7 @@ import pandas as pd
 from glyphs.utilities import hexagon_vertices, \
     compare_points, convert_to_slope_vector, \
     close_compare, is_parallel_vectors, \
-    angle_between, rotate, poly_area, total_distance, find_repeated_locs
+    angle_between, rotate, poly_area, total_distance, find_repeated_locs ,check_for_self_intersecting
 from tqdm import tqdm
 import logging
 
@@ -142,35 +142,82 @@ class GlyphPath:
                                                  target_slope,
                                                  debug_slopes=False)
 
-            all_path_points.extend(self.kernals[i].subpath)
 
+            if len(self.kernals)>2 and i >= len(self.kernals)-2:
+                subpath  = [item for item in self.kernals[i].subpath if item not in all_path_points]
+            else:
+                subpath = self.kernals[i].subpath
+
+            all_path_points.extend(subpath)
+
+            # boundaries = find_repeated_locs(all_path_points)
+            #
+            # all_path_points = all_path_points[boundaries[0]:boundaries[1]]
             # leap to next kernal
 
             same_rotation = self.kernals[i].rotation == self.kernals[i + 1].rotation
             current_point = self.kernals[i + 1].find_point_on_slope(all_path_points[-1], target_slope,
                                                                     same_rotation)
 
-        all_path_points.append(current_point)
 
-        rounded = np.round(all_path_points, 3)
-        rounded_refactor = [tuple(row) for row in rounded.tolist()]
+
+
+
+
+
         # trim off little bits
 
-        boundaries = find_repeated_locs(rounded_refactor)
 
-        bounded = rounded_refactor[boundaries[0]:boundaries[1]]
-        deduped = []
-        for val in bounded:
-            if val not in deduped:
-                deduped.append(val)
-        self.all_path_points = deduped
 
+        linked_dict = {all_path_points[i]: all_path_points[i + 1] if i < len(all_path_points) - 1 else None for i in range(len(all_path_points))}
+
+
+        # # #
+        # # # # recurse dict to clip nubs
+        # #
+        def recurse_dict(key):
+            if key in linked_dict:
+                if linked_dict[key]:
+                    ordered_values.append(linked_dict[key])
+                recurse_dict(linked_dict[key])
+        # #
+        max_len =0
+        longest_cycle = None
+        for point in all_path_points:
+            ordered_values = [point]
+
+            recurse_dict(point)
+            if len(ordered_values)>max_len:
+                longest_cycle = ordered_values
+                max_len = len(ordered_values)
+
+        if not longest_cycle:
+            longest_cycle =all_path_points
+
+        # complete cycle
+        longest_cycle.append(longest_cycle[0])
+        # boundaries = find_repeated_locs(longest_cycle)
+        # #
+        # all_path_points = longest_cycle[boundaries[0]:boundaries[1]]
+        # # dedup
+        # dedup = []
+        # for point in all_path_points:
+        #     if point not in dedup:
+        #         dedup.append(point)
+
+        self.all_path_points =longest_cycle
         return self.all_path_points
 
     def _determine_metrics(self):
         # does it pass
 
-        not_crossing = len(set(self.all_path_points)) == len(self.all_path_points)
+
+
+        is_crossing = check_for_self_intersecting(self.all_path_points)
+        # boundaries
+
+
+
 
         x, y = tuple(zip(*self.all_path_points))
         area = poly_area(x, y)
@@ -178,7 +225,7 @@ class GlyphPath:
         lenght_of_primary_cycle = len(self.path_locations)
 
         self.metrics = {}
-        self.metrics['not_crossing'] = not_crossing
+        self.metrics['is_crossing'] = is_crossing
         self.metrics['area'] = area
         self.metrics['concavity'] = area / lenght_of_primary_cycle
 

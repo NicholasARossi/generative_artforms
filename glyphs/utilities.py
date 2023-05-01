@@ -13,7 +13,7 @@ def hexagon_vertices(center, radius, flipped=False):
         else:
             x = center[0] + radius * math.cos(2 * math.pi * i / 6)
             y = center[1] + radius * math.sin(2 * math.pi * i / 6)
-        vertices.append((x, y))
+        vertices.append((np.round(x,4), np.round(y,4)))
     return vertices
 
 
@@ -91,6 +91,36 @@ def find_repeated_locs(input_list):
                 max_delta=delta
                 locs = v
     if max_delta == 0:
-        locs = [0,len(input_list)-1]
+        locs = [0,len(input_list)]
 
     return locs
+
+
+def segments_intersect(seg1, seg2):
+    # Calculate the parameters for the intersection of the two lines
+    x1, y1 = seg1[0]
+    x2, y2 = seg1[1]
+    x3, y3 = seg2[0]
+    x4, y4 = seg2[1]
+    denom = (y4-y3)*(x2-x1) - (x4-x3)*(y2-y1)
+    if denom == 0: # Lines are parallel
+        return False
+    t1 = ((x4-x3)*(y1-y3) - (y4-y3)*(x1-x3)) / denom
+    t2 = ((x2-x1)*(y1-y3) - (y2-y1)*(x1-x3)) / denom
+    # Check if the intersection point is within both line segments
+    if 0 <= t1 <= 1 and 0 <= t2 <= 1:
+        return True
+    else:
+        return False
+
+def check_for_self_intersecting(points):
+    n = len(points)
+    for i in range(n-1):
+        seg1 = (points[i], points[i+1])
+        for j in range(i+2, n-1):
+            seg2 = (points[j], points[j+1])
+            # im not interseted in paths that share points, only crossing
+            if len(set([points[j],points[j+1],points[i], points[i+1]])) == 4:
+                if segments_intersect(seg1, seg2):
+                    return True
+    return False
