@@ -4,6 +4,7 @@ from glyphs.visualization import render_multipath_lines
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
+import os
 
 def main(size):
     # generate plots
