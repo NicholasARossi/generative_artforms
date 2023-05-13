@@ -164,14 +164,14 @@ def render_multipath_fill(glyphs, save_location, annotate=False):
         fig.savefig(save_location, pad_inches=0, facecolor='white')
 
 
-def render_multipath_lines(glyphs, save_location, annotate=False):
+def render_multipath_lines(glyphs, save_location, annotate=False,width_height_ratio =1):
     # size = np.shape(glyphs[0].all_path_points)[0]
     static_offset = 5
-    num_cols = 25
+    num_cols = np.ceil(np.sqrt(len(glyphs))*width_height_ratio)
     fig, ax = plt.subplots(figsize=(num_cols,len(glyphs)/num_cols ))
-    ax.set_xlim([-.5, static_offset*num_cols+5])
+    ax.set_xlim([-.5, static_offset*num_cols+2])
 
-    ax.set_ylim([-.5, static_offset*len(glyphs)/num_cols+5])
+    ax.set_ylim([-.5, static_offset*len(glyphs)/num_cols+2])
 
 
     row_number = 0
@@ -179,7 +179,7 @@ def render_multipath_lines(glyphs, save_location, annotate=False):
 
     for i, glyph in enumerate(glyphs):
         column_number = i%num_cols
-        if column_number ==0:
+        if column_number ==0 and i!=0:
             row_number +=1
 
         x_offset = column_number*static_offset
@@ -195,6 +195,8 @@ def render_multipath_lines(glyphs, save_location, annotate=False):
         ax.plot(x, y, color='#d3d3d3')
 
     plt.axis('off')
-
+    ax.margins(x=0)
+    ax.margins(y=0)
     if save_location:
-        fig.savefig(save_location,pad_inches=0)
+        fig.savefig(save_location,bbox_inches='tight',pad_inches=0)
+    return fig
