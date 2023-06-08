@@ -4,7 +4,7 @@ import pandas as pd
 from glyphs.utilities import hexagon_vertices, \
     compare_points, convert_to_slope_vector, \
     close_compare, is_parallel_vectors, \
-    angle_between, rotate, poly_area, total_distance, find_repeated_locs ,check_for_self_intersecting
+    angle_between, rotate, poly_area, total_distance, find_repeated_locs, check_for_self_intersecting
 from tqdm import tqdm
 import logging
 
@@ -142,9 +142,8 @@ class GlyphPath:
                                                  target_slope,
                                                  debug_slopes=False)
 
-
-            if len(self.kernals)>2 and i >= len(self.kernals)-2:
-                subpath  = [item for item in self.kernals[i].subpath if item not in all_path_points]
+            if len(self.kernals) > 2 and i >= len(self.kernals) - 2:
+                subpath = [item for item in self.kernals[i].subpath if item not in all_path_points]
             else:
                 subpath = self.kernals[i].subpath
 
@@ -159,18 +158,10 @@ class GlyphPath:
             current_point = self.kernals[i + 1].find_point_on_slope(all_path_points[-1], target_slope,
                                                                     same_rotation)
 
-
-
-
-
-
-
         # trim off little bits
 
-
-
-        linked_dict = {all_path_points[i]: all_path_points[i + 1] if i < len(all_path_points) - 1 else None for i in range(len(all_path_points))}
-
+        linked_dict = {all_path_points[i]: all_path_points[i + 1] if i < len(all_path_points) - 1 else None for i in
+                       range(len(all_path_points))}
 
         # # #
         # # # # recurse dict to clip nubs
@@ -180,44 +171,32 @@ class GlyphPath:
                 if linked_dict[key]:
                     ordered_values.append(linked_dict[key])
                 recurse_dict(linked_dict[key])
+
         # #
-        max_len =0
+        max_len = 0
         longest_cycle = None
         for point in all_path_points:
             ordered_values = [point]
 
             recurse_dict(point)
-            if len(ordered_values)>max_len:
+            if len(ordered_values) > max_len:
                 longest_cycle = ordered_values
                 max_len = len(ordered_values)
 
         if not longest_cycle:
-            longest_cycle =all_path_points
+            longest_cycle = all_path_points
 
         # complete cycle
         longest_cycle.append(longest_cycle[0])
-        # boundaries = find_repeated_locs(longest_cycle)
-        # #
-        # all_path_points = longest_cycle[boundaries[0]:boundaries[1]]
-        # # dedup
-        # dedup = []
-        # for point in all_path_points:
-        #     if point not in dedup:
-        #         dedup.append(point)
 
-        self.all_path_points =longest_cycle
+        self.all_path_points = longest_cycle
         return self.all_path_points
 
     def _determine_metrics(self):
         # does it pass
 
-
-
         is_crossing = check_for_self_intersecting(self.all_path_points)
         # boundaries
-
-
-
 
         x, y = tuple(zip(*self.all_path_points))
         area = poly_area(x, y)

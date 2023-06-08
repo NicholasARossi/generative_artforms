@@ -18,7 +18,7 @@ def main(size):
     glyph_path_list = []
 
     index = 0
-    target_value = 10000
+    target_value = 20000
     with tqdm(total=target_value) as pbar:
         while len(successful_cylces) < target_value:
             index = (index + 1) % len(explorer.all_paths)
@@ -35,13 +35,13 @@ def main(size):
     result_df['glyph_objects'] = glyph_path_list
 
     sorted_df = result_df.sort_values(by='solidity')
-    glyphs = sorted_df.tail(800)['glyph_objects'].values.tolist()
-    render_multipath_lines(glyphs, save_location=f'solidity_{size}_800.svg')
+    glyphs = sorted_df.tail(2000)['glyph_objects'].values.tolist()
+    render_multipath_lines(glyphs, save_location=f'solidity_{size}_2000.svg',width_height_ratio=.85)
 
 
     sorted_df = result_df.sort_values(by='concavity')
-    glyphs = sorted_df.tail(800)['glyph_objects'].values.tolist()
-    render_multipath_lines(glyphs, save_location=f'concavity_{size}_800.svg')
+    glyphs = sorted_df.tail(2000)['glyph_objects'].values.tolist()
+    render_multipath_lines(glyphs, save_location=f'concavity_{size}_2000.svg',width_height_ratio=.85)
 
 
 if __name__ == '__main__':
