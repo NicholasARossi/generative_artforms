@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
+
+<metadata>
+Font name:               EMS Osmotron
+License:                 SIL Open Font License http://scripts.sil.org/OFL
+Created by:              Sheldon B. Michaels
+SVG font conversion by:  Windell H. Oskay
+A derivative of:         Orbitron (Regular)
+Designer:                Matt McInerney, the League of Moveable Type
+Link:                    https://www.theleagueofmoveabletype.com
+Google font page:        https://fonts.google.com/specimen/Orbitron
+</metadata>
+<defs>
+<font id="EMSOsmotron" horiz-adv-x="378" >
+<font-face
+font-family="EMS Redacteed"
+units-per-em="1000"
+ascent="800"
+descent="-200"
+cap-height="500"
+x-height="300"
+/>
+<glyph unicode=" " glyph-name="space" horiz-adv-x="378" />
+<missing-glyph horiz-adv-x="378" d="M 0,400 378,400"/>
+</font>
+</defs>
+</svg>

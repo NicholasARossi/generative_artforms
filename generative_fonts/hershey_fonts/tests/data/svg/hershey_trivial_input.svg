@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 744.09448819 1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="1.0alpha (8a5469a, 2019-05-29)"
+   sodipodi:docname="hershey_trivial_input.svg">
+  <style
+     id="style19"></style>
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     inkscape:document-rotation="0"
+     inkscape:window-maximized="0"
+     inkscape:window-y="23"
+     inkscape:window-x="0"
+     inkscape:window-height="993"
+     inkscape:window-width="1535"
+     showgrid="false"
+     inkscape:current-layer="layer1"
+     inkscape:document-units="px"
+     inkscape:cy="256.44843"
+     inkscape:cx="217.50453"
+     inkscape:zoom="3.964414"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:groupmode="layer"
+     inkscape:label="Layer 1">
+    <use
+       height="100%"
+       width="100%"
+       transform="translate(-13.816235,24.138247)"
+       id="use1116"
+       xlink:href="#A"
+       y="0"
+       x="0" />
+    <use
+       height="100%"
+       width="100%"
+       transform="translate(-10.028187,24.138247)"
+       id="use1118"
+       xlink:href="#B"
+       y="0"
+       x="0" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#text31"
+       id="DEAD-LINK"
+       transform="translate(10.292023,-24.880699)"
+       width="100%"
+       height="100%"
+       style="fill:#ffffff;fill-opacity:0" />
+    <flowRoot
+       transform="translate(-18.75)"
+       xml:space="preserve"
+       id="A"
+       style="font-style:normal;font-weight:normal;font-size:37.5px;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#e10000;stroke-width:0.9375;stroke-opacity:1"><flowRegion
+         id="flowRegion23"
+         style="fill:#ffffff;fill-opacity:1;stroke:#e10000;stroke-width:0.9375;stroke-opacity:1"><rect
+           id="rect25"
+           width="121.08263"
+           height="52.065529"
+           x="182.22934"
+           y="166.4886"
+           style="fill:#ffffff;fill-opacity:1;stroke:#e10000;stroke-width:0.878906;stroke-opacity:1" /></flowRegion><flowPara
+         style="stroke-width:0.9375"
+         id="flowPara27">Flow</flowPara></flowRoot>    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:37.50000000000000000px;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:#e10000;stroke-width:0.9375;stroke-opacity:1;"
+       x="156.80199"
+       y="308.15527"
+       id="B"><tspan
+         sodipodi:role="line"
+         id="tspan29"
+         x="156.80199"
+         y="308.15527"
+         style="fill:#ffffff;fill-opacity:1;stroke:#e10000;stroke-width:0.9375;stroke-opacity:1;">Text</tspan></text>
+    <use
+       x="0"
+       y="0"
+       xlink:href="#A"
+       id="use1120"
+       transform="translate(13.816235,-24.138247)"
+       width="100%"
+       height="100%" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#B"
+       id="use1122"
+       transform="translate(9.8485053,-24.138247)"
+       width="100%"
+       height="100%" />
+  </g>
+</svg>
